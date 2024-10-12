@@ -1,13 +1,16 @@
-from flask import render_template, abort 
-from jinja2 import TemplateNotFound
+from flask import render_template
+from jinja2 import TemplateNotFound 
 
-from . import main 
+from . import market 
+from app import login_required
+from models.model import Books
 
 
-@main.route('/', methods=["GET"])
-@main.route('/home')
-def home():
+@market.route('/market', methods=["GET"])
+@login_required
+def market():
     try:
-        return render_template('pages/home.html')
+        books = Books.query.all()
+        return render_template('pages/market.html', books=books), 200
     except TemplateNotFound:
-        abort(404)
+        return render_template('pages/error.html', message='Template not found'), 404
